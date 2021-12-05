@@ -116,8 +116,7 @@ trait NodeTrait
      */
     public function parent()
     {
-        return $this->belongsTo(get_class($this), $this->getParentIdName())
-            ->setModel($this);
+        return $this->belongsTo(get_class($this), $this->getParentIdName())->setModel($this);
     }
 
     /**
@@ -127,8 +126,7 @@ trait NodeTrait
      */
     public function children()
     {
-        return $this->hasMany(get_class($this), $this->getParentIdName())
-            ->setModel($this);
+        return $this->hasMany(get_class($this), $this->getParentIdName())->setModel($this);
     }
 
     /**
@@ -229,18 +227,6 @@ trait NodeTrait
     }
 
     /**
-     * Make this node a root node.
-     *
-     * @return $this
-     */
-    public function makeRoot()
-    {
-        $this->setParent(null)->dirtyBounds();
-
-        return $this->setNodeAction('root');
-    }
-
-    /**
      * Save node as root.
      *
      * @return bool
@@ -279,7 +265,7 @@ trait NodeTrait
      *
      * @return $this
      */
-    public function appendToNode(self $parent)
+    public function appendToNode(self $parent): self
     {
         return $this->appendOrPrependTo($parent);
     }
@@ -289,17 +275,15 @@ trait NodeTrait
      *
      * @return $this
      */
-    public function prependToNode(self $parent)
+    public function prependToNode(self $parent): self
     {
         return $this->appendOrPrependTo($parent, true);
     }
 
     /**
      * @param bool $prepend
-     *
-     * @return self
      */
-    public function appendOrPrependTo(self $parent, $prepend = false)
+    public function appendOrPrependTo(self $parent, $prepend = false): self
     {
         $this->assertNodeExists($parent)
             ->assertNotDescendant($parent)
@@ -332,10 +316,8 @@ trait NodeTrait
 
     /**
      * @param bool $after
-     *
-     * @return self
      */
-    public function beforeOrAfterNode(self $node, $after = false)
+    public function beforeOrAfterNode(self $node, $after = false): self
     {
         $this->assertNodeExists($node)
             ->assertNotDescendant($node)
@@ -471,7 +453,7 @@ trait NodeTrait
     /**
      * @param string $table
      */
-    public function applyNestedSetScope(QueryBuilder $query, $table = null): QueryBuilder
+    public function applyNestedSetScope(QueryBuilder $query, string $table = null): QueryBuilder
     {
         if (! $scoped = $this->getScopeAttributes()) {
             return $query;
@@ -585,7 +567,7 @@ trait NodeTrait
         }
 
         if ($value) {
-            $this->appendToNode(new self($this->newScopedQuery()->findOrFail($value)));
+            $this->appendToNode($this->newScopedQuery()->findOrFail($value));
         } else {
             $this->makeRoot();
         }
@@ -593,18 +575,13 @@ trait NodeTrait
 
     /**
      * Get whether node is root.
-     *
-     * @return bool
      */
-    public function isRoot()
+    public function isRoot(): bool
     {
         return is_null($this->getParentId());
     }
 
-    /**
-     * @return bool
-     */
-    public function isLeaf()
+    public function isLeaf(): bool
     {
         return $this->getLft() + 1 == $this->getRgt();
     }
@@ -896,29 +873,6 @@ trait NodeTrait
     }
 
     /**
-     * Call pending action.
-     */
-    protected function callPendingAction()
-    {
-        $this->moved = false;
-
-        if (! $this->pending && ! $this->exists) {
-            $this->makeRoot();
-        }
-
-        if (! $this->pending) {
-            return;
-        }
-
-        $method = 'action' . ucfirst(array_shift($this->pending));
-        $parameters = $this->pending;
-
-        $this->pending = null;
-
-        $this->moved = call_user_func_array([$this, $method], $parameters);
-    }
-
-    /**
      * @return bool
      */
     protected function actionRaw()
@@ -946,10 +900,8 @@ trait NodeTrait
 
     /**
      * Get the lower bound.
-     *
-     * @return int
      */
-    protected function getLowerBound()
+    protected function getLowerBound(): int
     {
         return (int) $this->newNestedSetQuery()->max($this->getRgtName());
     }
@@ -1176,5 +1128,37 @@ trait NodeTrait
                 throw new LogicException('Nodes must be in the same scope');
             }
         }
+    }
+
+    /**
+     * Make this node a root node.
+     *
+     * @return $this
+     */
+    private function makeRoot(): self
+    {
+        return $this->setParent(null)->dirtyBounds()->setNodeAction('root');
+    }
+
+    /**
+     * Call pending action.
+     */
+    private function callPendingAction()
+    {
+        $this->moved = false;
+
+        if (! $this->pending && ! $this->exists) {
+            $this->makeRoot();
+        }
+
+        if (! $this->pending) {
+            return;
+        }
+
+        $method = 'action' . ucfirst(array_shift($this->pending));
+
+        $this->moved = call_user_func_array([$this, $method], $this->pending);
+
+        $this->pending = null;
     }
 }

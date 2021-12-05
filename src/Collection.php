@@ -15,6 +15,11 @@ use Hyperf\Database\Model\Collection as BaseCollection;
 
 class Collection extends BaseCollection
 {
+    final public function __construct($items = [])
+    {
+        parent::__construct($items);
+    }
+
     /**
      * Fill `parent` and `children` relationships for every node in the collection.
      *
