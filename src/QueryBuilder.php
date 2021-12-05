@@ -394,7 +394,7 @@ class QueryBuilder extends Builder
      *
      * @return $this
      */
-    public function withoutRoot()
+    public function withoutRoot(): self
     {
         $this->query->whereNotNull($this->model->getParentIdName());
 
@@ -409,9 +409,9 @@ class QueryBuilder extends Builder
      *
      * @return $this
      */
-    public function hasParent()
+    public function hasParent(): self
     {
-        $this->query->whereNotNull($this->model->getParentIdName());
+        $this->withoutRoot();
 
         return $this;
     }
@@ -424,7 +424,7 @@ class QueryBuilder extends Builder
      *
      * @return $this
      */
-    public function hasChildren()
+    public function hasChildren(): self
     {
         [$lft, $rgt] = $this->wrappedColumns();
 
@@ -440,7 +440,7 @@ class QueryBuilder extends Builder
      *
      * @return $this
      */
-    public function defaultOrder($dir = 'asc')
+    public function defaultOrder($dir = 'asc'): self
     {
         $this->query->orders = null;
 
@@ -454,7 +454,7 @@ class QueryBuilder extends Builder
      *
      * @return $this
      */
-    public function reversed()
+    public function reversed(): self
     {
         return $this->defaultOrder('desc');
     }

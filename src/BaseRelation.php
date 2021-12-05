@@ -85,10 +85,8 @@ abstract class BaseRelation extends Relation
      * Initialize the relation on a set of models.
      *
      * @param string $relation
-     *
-     * @return array
      */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         return $models;
     }
@@ -168,33 +166,27 @@ abstract class BaseRelation extends Relation
 
     /**
      * @param $related
-     *
-     * @return bool
      */
-    abstract protected function matches(HyperfModel $model, $related);
+    abstract protected function matches(HyperfModel $model, $related): bool;
 
     /**
      * @param QueryBuilder $query
      * @param Model $model
      */
-    abstract protected function addEagerConstraint($query, $model);
+    abstract protected function addEagerConstraint($query, $model): void;
 
     /**
      * @param $hash
      * @param $table
      * @param $lft
      * @param $rgt
-     *
-     * @return string
      */
-    abstract protected function relationExistenceCondition($hash, $table, $lft, $rgt);
+    abstract protected function relationExistenceCondition($hash, $table, $lft, $rgt): string;
 
     /**
      * @param Model $model
-     *
-     * @return Collection
      */
-    protected function matchForModel(HyperfModel $model, HyperfCollection $results)
+    protected function matchForModel(HyperfModel $model, HyperfCollection $results): Collection
     {
         $result = $this->related->newCollection();
 

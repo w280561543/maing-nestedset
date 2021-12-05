@@ -19,7 +19,7 @@ class DescendantsRelation extends BaseRelation
     /**
      * Set the base constraints on the relation query.
      */
-    public function addConstraints()
+    public function addConstraints(): void
     {
         if (! Constraint::isConstraint()) {
             return;
@@ -33,17 +33,15 @@ class DescendantsRelation extends BaseRelation
      * @param QueryBuilder $query
      * @param Model $model
      */
-    protected function addEagerConstraint($query, $model)
+    protected function addEagerConstraint($query, $model): void
     {
         $query->orWhereDescendantOf($model);
     }
 
     /**
      * @param $related
-     *
-     * @return mixed
      */
-    protected function matches(Model $model, $related)
+    protected function matches(Model $model, $related): bool
     {
         return $related->isDescendantOf($model);
     }
@@ -53,10 +51,8 @@ class DescendantsRelation extends BaseRelation
      * @param $table
      * @param $lft
      * @param $rgt
-     *
-     * @return string
      */
-    protected function relationExistenceCondition($hash, $table, $lft, $rgt)
+    protected function relationExistenceCondition($hash, $table, $lft, $rgt): string
     {
         return "{$hash}.{$lft} between {$table}.{$lft} + 1 and {$table}.{$rgt}";
     }
