@@ -48,26 +48,31 @@ trait NodeTrait
      */
     protected $moved = false;
 
-    public function saving(Saving $event) {
+    public function saving(Saving $event)
+    {
         $this->callPendingAction();
     }
 
-    public function deleting(Deleting $event) {
+    public function deleting(Deleting $event)
+    {
         // We will need fresh data to delete node safely
         $this->refreshNode();
     }
 
-    public function deleted(Deleted $event) {
+    public function deleted(Deleted $event)
+    {
         $this->deleteDescendants();
     }
 
-    public function restoring() {
+    public function restoring()
+    {
         if (static::usesSoftDelete()) {
             static::$deletedAt = $this->{$this->getDeletedAtColumn()};
         }
     }
 
-    public function restored() {
+    public function restored()
+    {
         if (static::usesSoftDelete()) {
             $this->restoreDescendants(static::$deletedAt);
         }
@@ -457,8 +462,6 @@ trait NodeTrait
 
     /**
      * @param string $table
-     *
-     * @return QueryBuilder
      */
     public function newScopedQuery(string $table = null): QueryBuilder
     {
@@ -466,10 +469,7 @@ trait NodeTrait
     }
 
     /**
-     * @param QueryBuilder $query
      * @param string $table
-     *
-     * @return QueryBuilder
      */
     public function applyNestedSetScope(QueryBuilder $query, $table = null): QueryBuilder
     {
@@ -1050,8 +1050,6 @@ trait NodeTrait
      * @since 2.0
      *
      * @param int $position
-     *
-     * @return bool
      */
     protected function insertNode($position): bool
     {
@@ -1126,8 +1124,6 @@ trait NodeTrait
 
     /**
      * Get whether user is intended to delete the model from database entirely.
-     *
-     * @return bool
      */
     protected function hardDeleting(): bool
     {
