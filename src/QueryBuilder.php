@@ -41,11 +41,13 @@ class QueryBuilder extends Builder
 
         $query->where($this->model->getKeyName(), '=', $id);
 
-        $data = $query->first([$this->model->getLftName(),
-            $this->model->getRgtName(), ]);
+        $data = $query->first([
+            $this->model->getLftName(),
+            $this->model->getRgtName(),
+        ]);
 
-        if (! $data && $required) {
-            throw new ModelNotFoundException();
+        if (!$data && $required) {
+            throw (new ModelNotFoundException())->setModel($this->model);
         }
 
         return (array) $data;
@@ -156,7 +158,7 @@ class QueryBuilder extends Builder
      *
      * @param mixed $id
      *
-     * @return \Kalnoy\Nestedset\Collection
+     * @return \Maing\Nestedset\Collection
      */
     public function ancestorsOf($id, array $columns = ['*'])
     {
@@ -166,7 +168,7 @@ class QueryBuilder extends Builder
     /**
      * @param $id
      *
-     * @return \Kalnoy\Nestedset\Collection
+     * @return \Maing\Nestedset\Collection
      */
     public function ancestorsAndSelf($id, array $columns = ['*'])
     {
@@ -231,7 +233,7 @@ class QueryBuilder extends Builder
         }
 
         // Don't include the node
-        if (! $andSelf) {
+        if (!$andSelf) {
             ++$data[0];
         }
 
@@ -618,16 +620,6 @@ class QueryBuilder extends Builder
             ->all();
 
         return $this->fixNodes($dictionary, $root);
-    }
-
-    /**
-     * @param Model|NodeTrait $root
-     *
-     * @return int
-     */
-    public function fixSubtree($root)
-    {
-        return $this->fixTree($root);
     }
 
     /**

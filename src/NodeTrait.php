@@ -177,7 +177,7 @@ trait NodeTrait
      *
      * @return QueryBuilder
      */
-    public function nextSiblings()
+    private function nextSiblings()
     {
         return $this->nextNodes()
             ->where($this->getParentIdName(), '=', $this->getParentId());
@@ -188,7 +188,7 @@ trait NodeTrait
      *
      * @return QueryBuilder
      */
-    public function prevSiblings()
+    private function prevSiblings()
     {
         return $this->prevNodes()
             ->where($this->getParentIdName(), '=', $this->getParentId());
@@ -199,7 +199,7 @@ trait NodeTrait
      *
      * @return QueryBuilder
      */
-    public function nextNodes()
+    private function nextNodes()
     {
         return $this->newScopedQuery()
             ->where($this->getLftName(), '>', $this->getLft());
@@ -210,7 +210,7 @@ trait NodeTrait
      *
      * @return QueryBuilder
      */
-    public function prevNodes()
+    private function prevNodes()
     {
         return $this->newScopedQuery()
             ->where($this->getLftName(), '<', $this->getLft());
